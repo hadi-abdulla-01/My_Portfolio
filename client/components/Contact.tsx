@@ -9,47 +9,49 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const Contact = () => {
+function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
-    message: "",
+    message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      const res = await fetch("/.netlify/functions/submit-form", {
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: "5831b5fd-cea3-464d-a27c-2b821ba39d9e",
+          ...formData
+        }),
       });
 
-      if (res.ok) {
-        alert("Thank you for your message! I'll get back to you soon.");
-        setFormData({ name: "", email: "", phone: "", message: "" });
+      const result = await response.json();
+      if (result.success) {
+        alert("Message sent successfully!");
+        setFormData({ name: "", email: "", message: "" });
       } else {
-        alert(`Something went wrong. Please try again later.\nError: ${error.message}`);
-
+        alert("Failed to send message. Please try again.");
       }
     } catch (error) {
-      console.error("Form submission error:", error);
-      alert("An unexpected error occurred.");
+      alert("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+  
 
   return (
     <section
