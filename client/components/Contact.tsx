@@ -9,49 +9,47 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-function ContactForm() {
+const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: ""
+    phone: "",
+    message: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          access_key: "5831b5fd-cea3-464d-a27c-2b821ba39d9e",
-          ...formData
-        }),
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        alert("Message sent successfully!");
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        alert("Failed to send message. Please try again.");
-      }
-    } catch (error) {
-      alert("An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
-  
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("/.netlify/functions/submit-form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        alert("Thank you for your message! I'll get back to you soon.");
+        setFormData({ name: "", email: "", phone: "", message: "" });
+      } else {
+        alert(`Something went wrong. Please try again later.\nError: ${error.message}`);
+
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      alert("An unexpected error occurred.");
+    }
+  };
 
   return (
     <section
