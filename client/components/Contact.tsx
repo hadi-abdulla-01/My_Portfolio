@@ -31,29 +31,34 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
 
+    const formDataWithAccessKey = {
+      ...formData,
+      access_key: "5831b5fd-cea3-464d-a27c-2b821ba39d9e",
+      subject: "New Contact Form Submission from Your Website",
+    };
+
     try {
-      const res = await fetch("/.netlify/functions/submit-form", {
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataWithAccessKey),
       });
 
-      if (res.ok) {
+      const result = await res.json();
+
+      if (result.success) {
         alert("Thank you for your message! I'll get back to you soon.");
         setFormData({ name: "", email: "", phone: "", message: "" });
       } else {
-        const errorData = await res.json();
-        alert(
-          `Something went wrong. Please try again later.\nError: ${
-            errorData.message || "Unknown error"
-          }`
-        );
+        console.error("Form submission error:", result);
+        alert(`Something went wrong: ${result.message}`);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Form submission error:", error);
-      alert(`An unexpected error occurred: ${error.message}`);
+      alert("An unexpected error occurred while submitting the form.");
     } finally {
       setLoading(false);
     }
