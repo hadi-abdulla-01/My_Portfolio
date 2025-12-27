@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mhadiabdulla.netlify.app/sitemap.xml
