@@ -491,7 +491,7 @@ export default function Hero() {
                 <Github size={20} />
               </motion.a>
               <motion.a
-                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-4033782b5/"
+                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-39ba083a7"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -523,7 +523,7 @@ export default function Hero() {
                 <Github size={20} />
               </motion.a>
               <motion.a
-                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-4033782b5/"
+                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-39ba083a7"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
