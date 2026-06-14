@@ -306,7 +306,40 @@ export default function Hero() {
 
   return (
     <>
-      {/* Loading Screen removed */}
+      {/* Minimal Loading Screen */}
+      {!imagesLoaded && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black"
+        >
+          <div className="w-48 flex flex-col items-center">
+            {/* Minimal pulsing text */}
+            <motion.span
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              className="font-['Rubik',sans-serif] text-xs uppercase tracking-[0.3em] text-white mb-4"
+            >
+              Loading Portfolio
+            </motion.span>
+            {/* Sleek horizontal loading progress line */}
+            <div className="w-full h-[1px] bg-white/10 overflow-hidden relative">
+              <motion.div
+                animate={{ 
+                  left: ["-100%", "100%"] 
+                }}
+                transition={{ 
+                  duration: 1.5, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                }}
+                className="absolute top-0 bottom-0 w-1/2 bg-white"
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Main Hero Content */}
       <div
