@@ -23,7 +23,7 @@ const Experience = () => {
         "Collaborated with team members in an agile environment and participated in code reviews",
         "Gained hands-on experience in real-world software development workflows and debugging"
       ],
-      logo: "https://media.licdn.com/dms/image/v2/D560BAQFzWp3nUjX02A/company-logo_200_200/company-logo_200_200/0/1715694762002?e=1743638400&v=beta&t=7wQWbA09q8j_lT5uO8gCjG2j0xO1yLg1z0z0z0z0z0z",
+      logo: "/bluestock-logo.png",
       fallbackColor: "bg-blue-600"
     },
     {
@@ -43,7 +43,7 @@ const Experience = () => {
         "Worked on AI-related tasks involving data handling and model understanding",
         "Gained exposure to real-world AI workflows and remote collaboration"
       ],
-      logo: "https://media.licdn.com/dms/image/v2/C4D0BAQGQb7qyU1GU_Q/company-logo_200_200/company-logo_200_200/0/1644838079005?e=1743638400&v=beta&t=_Z8gQf0kXVPaWEkP6FhNqtfnV4WqCBYUBtpktQGOhEA",
+      logo: "/novolo-logo.png",
       fallbackColor: "bg-purple-600"
     }
   ];
