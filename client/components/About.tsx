@@ -104,17 +104,22 @@ const About = () => {
             solve complex problems and improve user experiences.
           </motion.p>
 
-          <motion.button
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="border-b-2 border-black pb-1 text-black font-semibold hover:border-gray-600 transition-colors"
-          >
-            EXPLORE
-          </motion.button>
+          <div className="flex justify-center">
+            <motion.a
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="border-b-2 border-black pb-1 text-black font-semibold hover:border-gray-600 transition-colors cursor-pointer"
+            >
+              DOWNLOAD RESUME
+            </motion.a>
+          </div>
         </div>
 
         {/* Services Section */}

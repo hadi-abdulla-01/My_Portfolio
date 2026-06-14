@@ -18,11 +18,11 @@ export default function Hero() {
   const prevMouseRef = useRef({ x: 300, y: 300 });
   const mousePositionRef = useRef({ x: 300, y: 300 });
 
-  const [maskUrl, setMaskUrl] = useState<string>('');
-  const [mousePosition, setMousePosition] = useState({ x: 300, y: 300 });
+  const bottomImageRef = useRef<HTMLImageElement | null>(null);
+  const topImageRef = useRef<HTMLImageElement | null>(null);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [loadedCount, setLoadedCount] = useState(0);
 
   // Track image loading
   useEffect(() => {
@@ -34,73 +34,83 @@ export default function Hero() {
 
     img1.onload = () => {
       count++;
-      setLoadedCount(count);
       if (count === totalImages) setImagesLoaded(true);
     };
 
     img2.onload = () => {
       count++;
-      setLoadedCount(count);
       if (count === totalImages) setImagesLoaded(true);
     };
 
     img1.src = '/hero-layer-bottom.png';
     img2.src = '/hero-layer-top.png';
-  }, []);
 
+    bottomImageRef.current = img1;
+    topImageRef.current = img2;
+  }, []);
 
   // Initialize offscreen canvas
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const offscreenCanvas = document.createElement('canvas');
-      offscreenCanvas.width = 600;
-      offscreenCanvas.height = 600;
       offscreenCanvasRef.current = offscreenCanvas;
     }
   }, []);
+
+  // Handle canvas sizing and resizing
+  useEffect(() => {
+    if (!imagesLoaded) return;
+
+    const handleResize = () => {
+      const container = containerRef.current;
+      const canvas = canvasRef.current;
+      const offscreenCanvas = offscreenCanvasRef.current;
+      if (!container || !canvas || !offscreenCanvas) return;
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [imagesLoaded]);
 
   // Mouse and Touch tracking
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        setMousePosition({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        });
         mousePositionRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (containerRef.current && e.touches.length > 0) {
+      if (window.innerWidth >= 1024 && containerRef.current && e.touches.length > 0) {
         const rect = containerRef.current.getBoundingClientRect();
         const touch = e.touches[0];
-        setMousePosition({
-          x: touch.clientX - rect.left,
-          y: touch.clientY - rect.top
-        });
         mousePositionRef.current = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
       }
     };
 
     const handleTouchStart = (e: TouchEvent) => {
-      if (containerRef.current && e.touches.length > 0) {
+      if (window.innerWidth >= 1024 && containerRef.current && e.touches.length > 0) {
         const rect = containerRef.current.getBoundingClientRect();
         const touch = e.touches[0];
-        setMousePosition({
-          x: touch.clientX - rect.left,
-          y: touch.clientY - rect.top
-        });
         mousePositionRef.current = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
       }
     };
 
     const container = containerRef.current;
     if (container) {
-      // Mouse events
       container.addEventListener('mousemove', handleMouseMove);
-      // Touch events
       container.addEventListener('touchmove', handleTouchMove, { passive: true });
       container.addEventListener('touchstart', handleTouchStart, { passive: true });
 
@@ -111,6 +121,32 @@ export default function Hero() {
       };
     }
   }, []);
+
+  // Helper function to scale and center cover images on canvas
+  const drawImageCover = (
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    canvasWidth: number,
+    canvasHeight: number
+  ) => {
+    const imgWidth = img.naturalWidth || img.width;
+    const imgHeight = img.naturalHeight || img.height;
+    if (!imgWidth || !imgHeight) return;
+
+    const imgRatio = imgWidth / imgHeight;
+    const canvasRatio = canvasWidth / canvasHeight;
+    let sx = 0, sy = 0, sw = imgWidth, sh = imgHeight;
+
+    if (imgRatio > canvasRatio) {
+      sw = imgHeight * canvasRatio;
+      sx = (imgWidth - sw) / 2;
+    } else {
+      sh = imgWidth / canvasRatio;
+      sy = (imgHeight - sh) / 2;
+    }
+
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvasWidth, canvasHeight);
+  };
 
   // Draw blob function
   const drawBlob = (
@@ -124,7 +160,7 @@ export default function Hero() {
     stretchY: number
   ) => {
     const controlPoints: ControlPoint[] = [];
-    const numPoints = 120;
+    const numPoints = 80; // Optimized from 120 points for better performance
 
     // Generate control points
     for (let i = 0; i < numPoints; i++) {
@@ -187,41 +223,68 @@ export default function Hero() {
     if (!ctx || !offscreenCtx) return;
 
     const animate = () => {
-      // Update time
-      timeRef.current += 0.04;
+      if (imagesLoaded && bottomImageRef.current && topImageRef.current) {
+        // Update time
+        timeRef.current += 0.04;
 
-      // Calculate velocity
-      const dx = mousePositionRef.current.x - prevMouseRef.current.x;
-      const dy = mousePositionRef.current.y - prevMouseRef.current.y;
-      velocityRef.current.x = dx * 0.2 + velocityRef.current.x * 0.8;
-      velocityRef.current.y = dy * 0.2 + velocityRef.current.y * 0.8;
-      prevMouseRef.current = { x: mousePositionRef.current.x, y: mousePositionRef.current.y };
+        const width = canvas.width;
+        const height = canvas.height;
 
-      // Clear main canvas
-      ctx.clearRect(0, 0, 600, 600);
+        if (width > 0 && height > 0) {
+          const isMobile = window.innerWidth < 1024;
+          
+          if (isMobile) {
+            // Smooth float animation path (Lissajous curve / floating movement)
+            const time = timeRef.current;
+            const autoX = width / 2 + Math.sin(time * 0.25) * (width * 0.2) + Math.cos(time * 0.1) * (width * 0.1);
+            const autoY = height / 2 + Math.cos(time * 0.2) * (height * 0.15) + Math.sin(time * 0.08) * (height * 0.05);
+            
+            // Lerp target position for lag-free motion
+            mousePositionRef.current.x += (autoX - mousePositionRef.current.x) * 0.05;
+            mousePositionRef.current.y += (autoY - mousePositionRef.current.y) * 0.05;
+          }
 
-      // Draw main center blob
-      ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-      const mainRadius = 90 + Math.sin(timeRef.current * 0.8) * 8;
-      drawBlob(
-        ctx,
-        300,
-        300,
-        mainRadius,
-        timeRef.current,
-        0,
-        velocityRef.current.x * 1.2,
-        velocityRef.current.y * 1.2
-      );
+          // Calculate velocity
+          const dx = mousePositionRef.current.x - prevMouseRef.current.x;
+          const dy = mousePositionRef.current.y - prevMouseRef.current.y;
+          velocityRef.current.x = dx * 0.2 + velocityRef.current.x * 0.8;
+          velocityRef.current.y = dy * 0.2 + velocityRef.current.y * 0.8;
+          prevMouseRef.current = { x: mousePositionRef.current.x, y: mousePositionRef.current.y };
 
-      // Apply contrast using offscreen canvas
-      offscreenCtx.filter = 'contrast(30)';
-      offscreenCtx.clearRect(0, 0, 600, 600);
-      offscreenCtx.drawImage(canvas, 0, 0);
+          // 1. Draw bottom image on main canvas
+          ctx.clearRect(0, 0, width, height);
+          drawImageCover(ctx, bottomImageRef.current, width, height);
 
-      // Convert to data URL
-      const maskDataUrl = offscreenCanvas.toDataURL();
-      setMaskUrl(maskDataUrl);
+          // 2. Draw feathered top layer on offscreen canvas (full color)
+          offscreenCtx.clearRect(0, 0, width, height);
+          offscreenCtx.save();
+          
+          // Feather mask by setting blur filter
+          offscreenCtx.filter = 'blur(25px)';
+          offscreenCtx.fillStyle = 'rgba(255, 255, 255, 1)';
+          
+          const mainRadius = 110 + Math.sin(timeRef.current * 0.8) * 8;
+          drawBlob(
+            offscreenCtx,
+            mousePositionRef.current.x,
+            mousePositionRef.current.y,
+            mainRadius,
+            timeRef.current,
+            0,
+            velocityRef.current.x * 1.2,
+            velocityRef.current.y * 1.2
+          );
+          
+          // Composite top image with the blurred mask
+          offscreenCtx.filter = 'none';
+          offscreenCtx.globalCompositeOperation = 'source-in';
+          drawImageCover(offscreenCtx, topImageRef.current, width, height);
+          offscreenCtx.restore();
+
+          // 3. Draw the resulting masked image onto the main canvas
+          ctx.drawImage(offscreenCanvas, 0, 0);
+        }
+      }
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -233,7 +296,7 @@ export default function Hero() {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, []);
+  }, [imagesLoaded]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -243,106 +306,19 @@ export default function Hero() {
 
   return (
     <>
-      {/* Loading Screen */}
-      {!imagesLoaded && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800"
-        >
-          <div className="text-center">
-            {/* Animated Logo/Name */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
-            >
-              <h1 className="font-['Syne',sans-serif] font-bold text-4xl md:text-6xl text-white mb-2">
-                Mohammed Hadi
-              </h1>
-              <p className="font-['Syne',sans-serif] text-lg md:text-xl text-gray-400">
-                Abdulla
-              </p>
-            </motion.div>
-
-            {/* Loading Spinner */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              className="w-16 h-16 mx-auto mb-4 border-4 border-white/20 border-t-white rounded-full"
-            />
-
-            {/* Loading Text */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="font-['Rubik',sans-serif] text-white/60 text-sm"
-            >
-              Loading experience... {Math.round((loadedCount / 2) * 100)}%
-            </motion.p>
-          </div>
-        </motion.div>
-      )}
+      {/* Loading Screen removed */}
 
       {/* Main Hero Content */}
       <div
         id="hero"
         ref={containerRef}
-        className="relative w-full min-h-screen overflow-hidden lg:cursor-none"
+        className="relative w-full min-h-screen overflow-hidden lg:cursor-none bg-gray-900"
       >
-        {/* Hidden canvas for drawing blob */}
+        {/* Canvas containing bottom and masked top image */}
         <canvas
           ref={canvasRef}
-          width={600}
-          height={600}
-          className="absolute pointer-events-none"
-          style={{ top: '-9999px' }}
+          className="absolute inset-0 w-full h-full pointer-events-none z-0"
         />
-
-        {/* Bottom Image - Always Visible */}
-        <div className="absolute inset-0 bg-gray-900">
-          <img
-            src="/hero-layer-bottom.png"
-            alt="Bottom layer"
-            className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
-        </div>
-
-        {/* Top Image - Masked by Cursor */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            WebkitMaskImage: maskUrl ? `url(${maskUrl})` : 'none',
-            maskImage: maskUrl ? `url(${maskUrl})` : 'none',
-            WebkitMaskRepeat: 'no-repeat',
-            maskRepeat: 'no-repeat',
-            WebkitMaskSize: '600px 600px',
-            maskSize: '600px 600px'
-          }}
-          animate={{
-            WebkitMaskPosition: `${mousePosition.x - 300}px ${mousePosition.y - 300}px`,
-            maskPosition: `${mousePosition.x - 300}px ${mousePosition.y - 300}px`
-          }}
-          transition={{
-            type: 'tween',
-            duration: 0.1,
-            ease: 'linear'
-          }}
-        >
-          <img
-            src="/hero-layer-top.png"
-            alt="Top layer"
-            className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
-        </motion.div>
 
         {/* Decorative SVG Blur Elements */}
         <div className="absolute flex h-[288.088px] items-center justify-center left-[-41px] top-[81px] w-[524.932px] pointer-events-none hidden lg:flex" style={{ "--transform-inner-width": "0", "--transform-inner-height": "0" } as React.CSSProperties}>
@@ -491,7 +467,7 @@ export default function Hero() {
                 <Github size={20} />
               </motion.a>
               <motion.a
-                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-39ba083a7"
+                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-4033782b5/"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -523,7 +499,7 @@ export default function Hero() {
                 <Github size={20} />
               </motion.a>
               <motion.a
-                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-39ba083a7"
+                href="https://www.linkedin.com/in/mohammed-hadi-abdulla-4033782b5/"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
