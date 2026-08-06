@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://www.mohammedhadiabdulla.online/sitemap.xml
+Sitemap: https://www.hadiabdulla.in/sitemap.xml
