@@ -63,7 +63,7 @@ const Portfolio = () => {
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop",
       tech: ["React", "Tailwind CSS", "Vite", "Framer Motion"],
       githubUrl: "https://github.com/hadi-abdulla-01/",
-      liveUrl: "https://mohammedhadiabdulla.online",
+      liveUrl: "https://hadiabdulla.in",
       features: [
         "Double-canvas hardware acceleration",
         "Feathered cursor-mask interactive reveal",
