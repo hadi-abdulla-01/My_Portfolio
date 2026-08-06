@@ -483,6 +483,7 @@ export default function Hero() {
             <div className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 top-[320px] gap-4 pointer-events-auto">
               <motion.a
                 href="mailto:mhadiabdulla4@gmail.com?subject=Hello Mohammed&body=Hi Mohammed, I would like to connect with you."
+                aria-label="Email Mohammed Hadi Abdulla"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-white hover:bg-white/30 transition-colors shadow-md border border-white/30"
@@ -491,6 +492,7 @@ export default function Hero() {
               </motion.a>
               <motion.a
                 href="https://github.com/hadi-abdulla-01/"
+                aria-label="Open Mohammed Hadi Abdulla GitHub profile"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -501,6 +503,7 @@ export default function Hero() {
               </motion.a>
               <motion.a
                 href="https://www.linkedin.com/in/mohammed-hadi-abdulla-4033782b5/"
+                aria-label="Open Mohammed Hadi Abdulla LinkedIn profile"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -515,6 +518,7 @@ export default function Hero() {
             <div className="lg:hidden flex justify-center gap-4 px-4 md:px-8 mt-6 pointer-events-auto">
               <motion.a
                 href="mailto:mhadiabdulla4@gmail.com?subject=Hello Mohammed&body=Hi Mohammed, I would like to connect with you."
+                aria-label="Email Mohammed Hadi Abdulla"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-white hover:bg-white/30 transition-colors shadow-md border border-white/30"
@@ -523,6 +527,7 @@ export default function Hero() {
               </motion.a>
               <motion.a
                 href="https://github.com/hadi-abdulla-01/"
+                aria-label="Open Mohammed Hadi Abdulla GitHub profile"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -533,6 +538,7 @@ export default function Hero() {
               </motion.a>
               <motion.a
                 href="https://www.linkedin.com/in/mohammed-hadi-abdulla-4033782b5/"
+                aria-label="Open Mohammed Hadi Abdulla LinkedIn profile"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}

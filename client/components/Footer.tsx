@@ -19,6 +19,8 @@ const Footer = () => {
           className="text-center mb-12"
         >
           <motion.button
+            type="button"
+            aria-label="Back to top"
             onClick={scrollToTop}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}

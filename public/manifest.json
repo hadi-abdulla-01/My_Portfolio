@@ -1,0 +1,46 @@
+{
+  "name": "Mohammed Hadi Abdulla Portfolio",
+  "short_name": "Hadi Abdulla",
+  "description": "Official AI/ML developer portfolio of Mohammed Hadi Abdulla.",
+  "start_url": "https://hadiabdulla.in/",
+  "scope": "https://hadiabdulla.in/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "https://hadiabdulla.in/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "https://hadiabdulla.in/preview.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://hadiabdulla.in/preview.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Mohammed Hadi Abdulla portfolio preview"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "View Portfolio",
+      "short_name": "Portfolio",
+      "url": "https://hadiabdulla.in/#portfolio",
+      "description": "Open Mohammed Hadi Abdulla's portfolio projects"
+    },
+    {
+      "name": "Contact Hadi",
+      "short_name": "Contact",
+      "url": "https://hadiabdulla.in/#contact",
+      "description": "Contact Mohammed Hadi Abdulla"
+    }
+  ]
+}

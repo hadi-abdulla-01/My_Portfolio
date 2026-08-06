@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://hadiabdulla.netlify.app/sitemap.xml
